@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间，将sql语句隔离  -->
+<mapper namespace="test">
+	<!--根据id查询用户信息  -->
+	<select id="findUserById" parameterType="int" resultType="com.itheima.pojo.User">
+		select * from user
+		where id = #{pid}
+		
+	</select>
+	
+	<!--根据用户名模糊查询  -->
+	<select id="findUserByUsername" parameterType="string" resultType="com.itheima.pojo.User">
+		<!-- select * from user
+		where username like #{username} -->
+		
+		select * from user where username like '%${value}%';
+	
+	</select>
+	
+	<!-- 插入用户 -->
+	<insert id="insertUser" parameterType="com.itheima.pojo.User">
+		<!-- 主键返回 ,配置这个才能返回数据库中id；不设置返回默认值0-->
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+	
+		insert into user(username,birthday,sex,address) 
+		values(#{username},#{birthday},#{sex},#{address});
+		
+	</insert>
+	
+	<!-- 更新用户 -->
+	<update id="updateUser" parameterType="com.itheima.pojo.User">
+		update user set 
+		username =#{username},
+		birthday = #{birthday},
+		sex = #{sex},
+		address =#{address}
+		where id =#{id}
+	</update>
+	
+	<!-- 删除用户 -->
+	<delete id="deleteUser" parameterType="int">
+		delete from user 
+		where id =#{id}
+		
+	</delete>
+</mapper>

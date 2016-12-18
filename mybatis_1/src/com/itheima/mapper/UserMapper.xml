@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.mapper.UserMapper">
+	
+	<!--通过id查询  -->
+	<select id="findUserById" parameterType="int" resultType="user">
+		select * from user
+		where id=#{id}
+	
+	</select>
+	<!--通过姓名模糊查询  -->
+	<select id="findUserByUsername" parameterType="string" resultType="com.itheima.pojo.User">
+		<!-- 模糊查询，简单类型必须是value -->
+		select* from user
+		where username like '%${value}%'
+	</select>
+	
+	<!--使用包装类型查询用户  -->
+	<select id="findUserByQueryVo" parameterType="queryvo" resultType="user">
+	
+		select * from user where username like '%${user.username}%'
+	</select>
+	
+	<!--获取用户总数  -->
+	<select id="findUserCount" resultType="int">
+		select count(*) from user
+	</select>
+	<!-- resultMap测试 -->
+	<resultMap type="user" id="user_resultMap">
+		<id column="uid" property="id"/>
+		<result column="uname" property="username"/>
+		<result column="birthday" property="birthday"/>
+		<result column="sex" property="sex"/>
+		<result column="address" property="address"/>
+	
+	</resultMap>
+	
+	<select id="getUserByResultMap" resultMap="user_resultMap">
+		select 
+			id uid,
+			username uname,
+			birthday,
+			sex,
+			address
+		from 
+			user
+	
+	</select>
+	<!-- 传递pojo查询用户信息 -->
+	<select id="findUserList" parameterType="user" resultType="user">
+		<!-- select * from user
+		where 1=1
+		<if test="id!=0">
+		and id=#{id}
+		</if>
+		<if test="username!=null and username!=''">
+		and username like '%${username}%'
+		</if> -->
+		
+		select * from user
+		<where>
+			<if test="id!=null and id!=''">
+				and id =#{id}
+			</if> 
+			<if test="username!=null and username!=''">
+				and username like '%${username}%'
+			</if>
+		
+		</where>
+		
+	</select>
+	<sql id="where_condition">
+		<where>
+		<if test="user!=null">
+			<if test="user.id!=0">
+				and id = #{user.id}
+			</if>
+			<if test="user.username!=null and user.username!=''">
+				and username like '%${user.username}%'
+			</if>
+			
+			<if test="ids!=null">
+				<!-- and id in (
+					<foreach collection="ids" item="id" separator=",">
+						#{id}
+					</foreach>
+				) -->
+				<foreach collection="ids" item="id" separator="," open="and id in (" close=")">
+					#{id}
+				</foreach>
+				
+			</if>
+		</if>
+		</where>
+	</sql>
+	
+	<!-- 动态 -->
+	<select id="getUserByDongTai" parameterType="queryVo" resultType="user">
+		select * from user
+		
+		<include refid="where_condition"/>
+	
+	</select>
+	
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.mapper.UserMapper">
+	
+	<!--通过id查询  -->
+	<select id="findUserById" parameterType="int" resultType="user">
+		select * from user
+		where id=#{id}
+	
+	</select>
+	<!--通过姓名模糊查询  -->
+	<select id="findUserByUsername" parameterType="string" resultType="com.itheima.pojo.User">
+		<!-- 模糊查询，简单类型必须是value -->
+		select* from user
+		where username like '%${value}%'
+	</select>
+
+</mapper>
